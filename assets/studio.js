@@ -33,3 +33,5 @@
  $('studioReset').addEventListener('click',()=>{if(!confirm('Replace your current code with the starting example?'))return;inputs.forEach((el,i)=>el.value=defaults[i]);save();run();});
  run();
 })();
+
+try{const t=JSON.parse(localStorage.getItem("ethan-studio-transfer")||"null");if(Array.isArray(t)){["studioHtml","studioCss","studioJs"].forEach((id,i)=>{const el=document.getElementById(id);if(el){el.value=t[i]||"";el.dispatchEvent(new Event("input",{bubbles:true}))}});localStorage.removeItem("ethan-studio-transfer")}}catch(e){}

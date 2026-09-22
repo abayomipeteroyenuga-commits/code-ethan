@@ -59,19 +59,8 @@ function openLesson(ci,li){current={c:ci,l:li};let c=courses[ci],d=c.lessons[li]
 closeLesson.onclick=()=>{lesson.classList.add("hidden");courses[0]&&document.querySelector("#courses").scrollIntoView({behavior:"smooth"})};
 startBtn.onclick=missionBtn.onclick=()=>openLesson(0,0);
 continueBtn.onclick=continueLearning; continueProgress.onclick=()=>{progressModal.classList.add("hidden");continueLearning()};
-openPractice.onclick=()=>document.querySelector("#practice").scrollIntoView({behavior:"smooth"});
+openPractice.onclick=()=>location.href='studio.html';
 completeLesson.onclick=()=>{let s=state(),key=current.c+"-"+current.l;if(!s.done.includes(key)){s.done.push(key);s.stars=(s.stars||0)+1;}save(s);renderCourses();let c=courses[current.c];if(current.l<c.lessons.length-1)openLesson(current.c,current.l+1);else{lesson.classList.add("hidden");showProgress()}};
-const defaults={html:"<h1>Hello! I made this page.</h1>\\n<p>I am learning with Ethan Code.</p>\\n<button>My Button</button>",css:"body {\\n  font-family: Arial, sans-serif;\\n  padding: 30px;\\n}\\nh1 { color: navy; }\\nbutton { padding: 10px; }",js:"// JavaScript can make the page react.\\nconsole.log('My page is ready!');"};
-function setCode(){
- htmlCode.value=defaults.html; cssCode.value=defaults.css; jsCode.value=defaults.js;
-}
-function run(){
- const safeJS=jsCode.value.split("</script>").join("<\\/script>");
- preview.srcdoc='<!doctype html><html><head><meta charset="utf-8"><style>'+cssCode.value+'</style></head><body>'+htmlCode.value+'<script>'+safeJS+'<\\/script></body></html>';
-}
-runCode.onclick=run;
-resetCode.onclick=()=>{setCode();run()};
-setCode();run();
 function showProgress(){let s=state(),total=courses.reduce((n,c)=>n+c.lessons.length,0),pct=Math.round(s.done.length/total*100);progressBar.style.width=pct+"%";progressText.textContent=`You have finished ${s.done.length} of ${total} classroom lessons (${pct}%). Keep going one small step at a time.`;let bs=["🌱 Coding Starter"];if(s.done.length>=3)bs.push("⭐ Lesson Explorer");if(s.done.length>=9)bs.push("🛠️ Young Builder");if(s.done.length>=18)bs.push("🏆 Code Creator");badges.innerHTML=bs.map(x=>`<span>${x}</span>`).join("");progressModal.classList.remove("hidden")}
 progressBtn.onclick=showProgress;closeProgress.onclick=()=>progressModal.classList.add("hidden");progressModal.onclick=e=>{if(e.target===progressModal)progressModal.classList.add("hidden")};renderCourses();
 
@@ -111,7 +100,7 @@ art:"Start with: 1) choose a shape, 2) choose a pattern, 3) repeat it, 4) change
 web:"Start with: 1) choose a safe topic, 2) add a heading, 3) add two sections, 4) style the page, 5) check it on a small screen."
 };
 const templates={story:{html:"<h1>My Story</h1><p id='story'>A friendly robot found a map.</p><button id='next'>What happens next?</button>",css:"body{font-family:Arial;padding:30px} button{padding:10px}",js:"document.querySelector('#next').onclick=()=>document.querySelector('#story').textContent='The robot followed the map to a coding club!'"},game:{html:"<h1>Score Challenge</h1><p>Score: <b id='score'>0</b></p><button id='point'>Earn a point</button>",css:"body{font-family:Arial;padding:30px} button{padding:10px}",js:"let score=0;document.querySelector('#point').onclick=()=>document.querySelector('#score').textContent=++score"},art:{html:"<h1>Code Art</h1><div class='art'>★ ★ ★</div>",css:"body{font-family:Arial;padding:30px;text-align:center}.art{font-size:60px;letter-spacing:15px}",js:""},web:{html:"<h1>My Learning Website</h1><h2>About</h2><p>This page shares something useful I am learning.</p>",css:"body{font-family:Arial;max-width:700px;margin:auto;padding:30px}h1{color:navy}",js:""}};
-function loadTemplate(k){const t=templates[k];htmlCode.value=t.html;cssCode.value=t.css;jsCode.value=t.js;run();document.querySelector('#practice').scrollIntoView({behavior:'smooth'})}
+function loadTemplate(k){const t=templates[k];document.getElementById('studioHtml').value=t.html;document.getElementById('studioCss').value=t.css;document.getElementById('studioJs').value=t.js;document.getElementById('studioRun').click();location.href='studio.html'}
 document.querySelectorAll(".interestgrid article").forEach(a=>a.querySelector("button").onclick=()=>{const k=a.dataset.interest;choiceBox.innerHTML=`<b>${ideas[k]}</b><div><button class="primary launch-template" data-template="${k}">Open Starter Template</button></div>`;choiceBox.querySelector('button').onclick=()=>loadTemplate(k)});
 
 explainAgain.onclick=()=>{let d=courses[current.c].lessons[current.l];helpText.textContent="Another way to think about it: "+d[3]};
@@ -132,3 +121,5 @@ if(menuBtn){
 resetProgress.onclick=()=>{if(confirm("Reset all Ethan Code lesson, quiz, mission and star progress on this device?")){localStorage.removeItem("ethanKidsCode");renderCourses();renderMissions();showProgress()}};
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){mainNav.classList.remove("open");progressModal.classList.add("hidden")}});
 document.addEventListener("click",e=>{if(mainNav.classList.contains("open")&&!mainNav.contains(e.target)&&e.target!==menuBtn)mainNav.classList.remove("open")});
+
+if(location.pathname.endsWith("courses.html")){const q=new URLSearchParams(location.search);if(q.has("continue"))continueLearning();else if(q.has("start"))openLesson(0,0)}
